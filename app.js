@@ -1,13 +1,31 @@
-const http = require('http')
+const express = require('express')
+const app = express()
 const request = require('request')
+const bodyParser = require('body-parser')
+const bitcore = require('bitcore-lib')
 
-http.createServer((req, res) => {
-  request({
-    url: 'https://blockchain.info/stats?format=json',
-    json: true
-  }, (error, response, body) => {
-    console.log(body.market_price_usd)
-  })
-  console.log(req.url);
-  res.end('End here')
-}).listen(8080)
+app.use(bodyParser.urlencoded({
+  extended: true
+}))
+
+app.use(bodyParser.json())
+
+app.get('/', function (req, res) {
+    res.sendFile('index.html', { root: __dirname });
+})
+
+app.post('/wallet', function (req, res) {
+    const brainsrc = req.body.brainsrc;
+    const input = new Buffer(brainsrc);
+    const hash = bitcore.crypto.Hash.sha256(input);
+    const bn = bitcore.crypto.BN.fromBuffer(hash);
+    const pk = new bitcore.PrivateKey(bn).toWIF();
+    const addy = new bitcore.PrivateKey(bn).toAddress();
+    res.send(`Wallet of: <strong>${brainsrc}</strong>,<br>
+              Address: <strong>${addy}</strong>,<br>
+              Key: <strong>${pk}</strong>`);
+})
+
+app.listen(8080, () => {
+  console.log('Running...')
+})

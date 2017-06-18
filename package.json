@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
+    "bitcore-lib": "^0.14.0",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
     "request": "^2.81.0"
   },
   "scripts": {
